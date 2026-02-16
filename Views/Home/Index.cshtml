@@ -1,0 +1,247 @@
+﻿@model DiscountOptionDataWeb.Models.Category
+@{
+    ViewBag.Title = "Index";
+}
+<div id="myCarousel" class="carousel slide text-center" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <img src="~/Content/images/ny_resize-min.jpg" alt="most affordable historical option data">
+            <div class="carousel-caption">
+                <h4 style="color:white" title="most affordable historical option data">THE END OF HIGH PRICES FOR HISTORICAL OPTION DATA<br>
+                    <span style="font-style:normal">Our friendly pricing is</span><span style="color:red;font:bolder;font-size:x-large"> at least 60% lower</span><span> than the nearest competitor.</span>
+                <span style="font-style:normal">Guaranteed to beat any competitors or it is free!</span>
+                <br/>
+                    <span> ORDER AND SAVE BIG NOW!</span>
+               
+                </h4>
+              
+            </div>
+        </div>
+        <div class="item">
+            <img src="~/Content/images/ny_resize-min.jpg" alt="most affordable historical option data">
+            <div class="carousel-caption">
+                <h4 style="color:white" title="most affordable historical option data">SEAMLESS DATA DELIVERY<br><span style="font-style:normal">CSV files downloadable from your browser, sharable to your Google Drive, or shipped as hard drive to your home...</span></h4>
+            </div>
+        </div>
+        <div class="item">
+            <img src="~/Content/images/ny_resize-min.jpg" alt="most affordable historical option data">
+            <div class="carousel-caption">
+                <h4 style="color:white" title="most affordable historical option data">Discount Historical Option Data to backtest your option trading strategies</h4>
+            </div>
+        </div>
+    </div>
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    </a>
+</div>
+<div id="products" class="container-fluid">
+    <div class="row">
+        @{
+            var query = Model.Products.Where(item => item.IsActive).OrderBy(p => p.DisplayOrderID);
+        }
+        @foreach (var product in query)
+        {
+           
+            <div class="col-xs-12 col-md-4">
+               
+                  <div class='panel panel-default text-center'>
+                
+                            @if (product.Id == 38 || product.Id == 37 || product.Id == 36 || product.Id == 31 || @product.Id == 32 || product.Id == 33 || product.Id == 34 || product.Id == 3 || product.Id == 40 || product.Id == 42)
+                            {
+                                @Html.Raw("<div class='panel-headingbundle'>")
+                            }
+                            else
+                            {
+                                @Html.Raw("<div class='panel-heading'>")
+                            }
+                                    <h3>@product.Name</h3>
+                                @Html.Raw("</div>")
+                            <div class="panel-body">
+                                <h3>@product.Price USD</h3>
+                                <p class="text-center">
+                                    @Html.ActionLink("Add to cart", "AddToCart", "ShoppingCart", new { id = product.Id }, new { @class = "btn btn-primary active" })
+                                </p>
+                                <p>@String.Format("{0:#,##0}", product.SymbolsCount) Stock Symbol(s)</p>
+                                <p>@String.Format("{0:n0}", product.RowsNum) Rows</p>
+                                @{
+
+                                    var fullPath = product.SampleFilePath != null ? Url.Content("../Content/SampleData/") + product.SampleFilePath : "";
+                                }
+                                @{
+                                    var size = product.MemoryGSize > 0 ? product.MemoryGSize.ToString() + "(Gigabyte(s))" : "";
+                                }
+                                <h3>@size </h3>
+                                <p><a href="@fullPath">Download Sample Data (.csv)</a></p>
+                            </div>
+                            <div class="panel-footer">
+                                @if (product.SavingMessage != null)
+                                {
+                                    <span>@product.SavingMessage</span>
+                                }
+                                else
+                                {
+                                    <span style="visibility:hidden">Saving 50% versus buying single items!</span>
+                                }
+                            </div>
+                 </div>
+             </div>
+
+         }
+    </div>
+    <div id="scrollFAQ">
+        <div class="container-fluid">
+            <div class="jumbotron text-center11">
+                <h1> <span style="color:#f4511e">ABOUT US</span></h1>
+                <h3><strong>OUR MISSION:</strong></h3>
+                <p>
+                    Sick and tired of paying high prices for historical option data?
+                    Or have been hesitant to buy historical option data because it is not
+                    so cheap as you found out?
+                </p>
+                <p>
+                    Making a consistent profit trading in the market is hard enough,
+                    let alone coming up with reliable trading strategies and algorithms and
+                    then paying <strong>BIG MONEY</strong> for historical data to backtest your strategies.
+                </p>
+                <p>
+                    Our mission at <strong>discountoptiondata.com</strong> is to provide the most affordable end-of-day historical option data
+                    to consumers ever! Instead of paying thousands of dollars for historical option data from elsewhere
+                    we offer the whole dataset from 2005 up to today for just a few hundred dollars.
+                    There is no place on earth that can beat this price! If you find any other websites selling a comparable product
+                    at a lower price, please let us know and we will give it to you for free!
+                </p>
+                <p>
+                    Since our inception, we have sold our option data to thousands of satisfied customers from around the globe.
+                    Buyers of our data range from regular, retail traders, students, finance professors to investment professionals
+                    from countries such as the USA, Canada, Bolivia, Peru, Argentina, Brazil, the United Kingdom, France, Israel,
+                    Italy, the Netherlands, Switzerland, Denmark, Belgium, Germany, Russia, Rumania, Bulgaria, Italy, India, China,
+                    Australia, Singapore, Malaysia, Hong Kong, South Korea, Japan, and many others.
+                    We offer even deeper discount to aspiring finance and quant students when requested.
+                </p>
+                <p>
+                    <strong>Our pricing structure is simple and transparent</strong>:
+                    There is no need to “contact us for quote” as most of our competitors who like to
+                    keep customers in the dark.
+                    At <strong>discountoptiondata.com</strong>, the pricing is so low, so clear,
+                    so loud on the home page so you don’t have to guess.
+                    We also absolutely don’t care if you are an individual investor or a rich hedge fund,
+                    you all pay the same guaranteed lowest price.
+                    We simply just refuse to rip you off like other
+                    financial data companies just because we think you can afford it.
+                </p>
+                <h1> <span style="color:#f4511e">Product Details</span></h1>
+                <p>
+                    We provide historical option data for all US stock and index symbols of around 4000 of them
+                    from 2005 up to the present.
+                    Data could be purchased by year or as a whole historically.
+                </p>
+                <strong><span style="color:#f4511e">Data Fields</span></strong>
+                <p>
+                    Symbol, ExpirationDate, AskPrice, AskSize, BidPrice, BidSize, LastPrice, PutCall, StrikePrice, Volume, OpenInterest, UnderlyingPrice, DataDate
+                </p>
+				
+				 <strong><span style="color:#f4511e">Data Fields - With Greeks</span></strong>
+                <p>
+                    Symbol, ExpirationDate, AskPrice, AskSize, BidPrice, BidSize, LastPrice, PutCall, StrikePrice, Volume, OpenInterest, UnderlyingPrice, DataDate, Implied Volatility, Delta, Gamma, Vega, Rho, Theta
+                </p>
+				
+                <strong><span style="color:#f4511e">Sample Data</span></strong>
+                <p>For a preview of what your purchased data will look like</p>
+                <strong><a href="../Content/SampleData/20190102_SPY.csv">Download Sample File Here - Bare</a></strong>
+				<br/>
+				<strong><a href="../Content/SampleData/DG_20220301.zip">Download Sample File Here - With Greeks</a></strong>
+                <br/><br/>
+				
+				
+                <strong><span style="color:#f4511e">Data Size</span> (compressed):</strong><br/>
+                <ul>
+                    <li>All Years (from 2005 to now): more than 32 GB - 1,721,550,509 Rows - more than 4,000 symbols</li>
+                      <li>2019: > 3.4 GB - 233,542,652 rows - 4,309 symbols</li>
+                    <li>2018: > 3.3 GB - 132,046,568 rows - 4,352 symbols</li>
+                    <li>2017: > 3.1 GB - 207,448,542 rows - 4,552 symbols</li>
+                    <li>2015: 3.2 GB - 209,676,299 rows - 4,742 symbols</li>
+                    <li>2014: 2.5 GB - 173,117,228 rows - 4,440 symbols</li>
+                    <li>2013: 2.2 GB - 139,138,333 rows - 4,197 symbols</li>
+                    <li>2012: 1.9 GB - 123,285,056 rows - 3,991 symbols</li>
+                    <li>2011: 1.7 GB - 104,987,524 rows - 3,962 symbols</li>
+                    <li>2010: 1.4 GB - 66,895,585 rows - 3,747 symbols</li>
+					
+                    <li>2009: 1.3 GB - 67,748,263 rows - 3,718 symbols</li>
+                    <li>2008: 1.3 GB - 69,081,973 rows - 3,799 symbols</li>
+                    <li>2007: 0.95 GB - 56,134,104 rows - 3,684 symbols</li>
+                    <li>2006: 0.79 GB - 46,992,727 rows - 3,350 symbols</li>
+                    <li>2005: 0.67 GB - 40,718,240  rows - 3,137 symbols</li>
+                    @*<li>2004: 0.58 GB - 34,795,978 rows - 2,703  symbols</li>
+            <li>2003: 0.57 GB - 29,594,528 rows - 2,605 symbols</li>*@
+                </ul>
+                <h1> <span style="color:#f4511e">Frequently Asked Questions</span></h1>
+                <h2>How is the product delivered?</h2>
+
+                <p>
+                    Data is delivered as zipped .csv files.
+                    Data is delivered by:
+                </p>
+
+                <p>
+                    1. <strong>Physical delivery:</strong> compressed csv files stored in flash drive and delivered to your physical
+                    address.
+                  
+                    <br />
+                    2. <strong>Google Drive delivery (super recommended)</strong>: upon providing us your valid gmail address, files are automatically delivered instantaneously  to your shared Google Drive.
+                    This is so hassle-free compared to the other options. The reason Google Drive is super recommended is in the extremely rare case of our servers going down at all, the chance of
+                    Google Drive going down is even way a LOT more unlikely. One note is your Google Drive most likely has 15 GBs available be default, but don't worry, since the files
+                    are shared from our Google Drive (more than 1 TBs), you don't have to worry about your Google Drive capacity.
+                </p>
+
+
+                @*<h2>How accurate is the data?</h2>
+                <p>
+                    Our data is aggregated daily after market hours from Options Price Reporting Authority (OPRA), the most trusted source of option data on the market.
+                    We are 99.95% confident of its accuracy and reliability.
+                </p>*@
+                <h2>What are the symbols you carry?</h2>
+                <p>
+                    We carry over 4000 symbols and indexes covering  the entire US market. For the list of symbols and indexes please refer to
+                    our <a href="@Url.Content("../home/ProductDetails")">product details</a>
+                </p>
+                @*<h2>If I buy data today, can I get the daily data for the rest of year?</h2>
+                <p>Absolutely, the data file for the year is updated daily, you can always log back in on another day to get the latest data.</p>
+                <h2>Do you  carry past options data for companies that have been acquired?</h2>
+                <p>Since data is historical, acquired companies would be recorded too.</p>
+
+                <h2>Do you sell option data for individual symbols?</h2>
+                <p>As of now, we only sell whole data set for the following individual symbols SPY, SPX, and QQQ. Others to be offered in the future. Please feel free to contact for your symbols of interest.</p>*@
+
+                <h2>I just wanted to quickly confirm that the option data you provide for the tickers covered includes all option expiration dates, i.e. includes all LEAPS?</h2>
+                <p>Yes, data includes all option expiration dates, i.e. includes all LEAPS.</p>
+
+                <h2>Do you have historical minute level option data for USA stocks and Indexes?</h2>
+                <p>No, we don’t. We specialize only in end of day option data at this point.</p>
+
+                <h2>How is security enforced for online transactions at discountoptiondata.com?</h2>
+                <p>
+                    Your credit card transactions are secure with us. We use secure socket layer technology throughout the site. We do not store
+                    your credit card numbers on our servers and are PCI compliant.
+                  
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+

@@ -1,0 +1,146 @@
+﻿@model DiscountOptionDataWeb.Models.CustomerOrder
+@{
+    ViewBag.Title = "AddressAndPayment";
+    
+}
+
+<h2>Address And Payment</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"
+        type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"
+        type="text/javascript"></script>
+@using (Html.BeginForm("AddressAndPayment", "Checkout", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "frmCharge" }))
+{
+    <dl class="dl-horizontal">
+        @*//lnh: need error checking  for this form*@
+       
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName) 
+        <dd>
+            @Html.TextBoxFor(model => model.FirstName, new { id = "txtFirstName", @Value="Luan"})
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd>
+            @Html.TextBoxFor(model => model.LastName, new { id = "txtLastName", Value="Huynh" })
+            @*@Html.TextBox("txtLastName", "Huynh")*@
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd>
+            @Html.TextBoxFor(model => model.Address, new { id = "txtAddress", @Value="1001 Synott Rd" })
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+        <dd>
+            @Html.TextBoxFor(model => model.City, new { id = "txtCity",@Value = "Houston" })
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.State)
+        </dt>
+        <dd>
+            @Html.TextBoxFor(model => model.State, new { id = "txtState" , @Value="TX"})
+        </dd>
+        
+      
+        <dt>
+            @Html.DisplayNameFor(model => model.Country)
+        </dt>
+        <dd>
+            @Html.TextBoxFor(model => model.Country, new { id = "txtCountry", @Value="USA" })
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </dt>
+        <dd>
+            @Html.TextBoxFor(model => model.PostalCode, new { id = "txtPostalCode", @Value="77082" })
+        </dd>
+        
+    </dl>
+        <div class="weird">
+            <h2>Address And Payment</h2>
+
+            <div>
+                <h4>Credit Card Info</h4>
+                <hr />
+                <dl class="dl-horizontal">
+                    <dt>
+                        <label for="txtCardNumber">Card Number *</label>
+                    </dt>
+                    <dd>
+                        <input type="text" name="CardNumber" id="txtCardNumber" value="4242424242424242" placeholder="Card Number e.g 1234..." />
+                    </dd>
+                    <dt>
+                        <label for="txtCvc">Cvc *</label>
+                    </dt>
+                    <dd>
+                        <input type="text" name="Cvc" id="txtCvc" value="987" placeholder="987" />
+                    </dd>
+                    <dt>
+                        <label for="txtExpiryMonth">Expiry Month (MM) *</label>
+                    </dt>
+                    <dd>
+                        <input type="text" name="ExpiryMonth" id="txtExpiryMonth" value="12" placeholder="01" />
+                    </dd>
+                    <dt>
+                        <label for="txtExpiryYear">Expiry Year (YYYY) *</label>
+                    </dt>
+                    <dd>
+                        <input type="text" name="ExpiryYear" id="txtExpiryYear" value="2018" placeholder="2015" />
+                    </dd>
+                </dl>
+            </div>
+            <p>
+                @Html.HiddenFor(model => model.Token, new { id = "hdnToken" })
+                @Html.ActionLink("Process Payment", "Charge", null, new { id = "btnCharge" })
+            </p>
+            @*<input type="submit" value="Submit Order"/>*@
+        </div>
+}
+
+
+@section Scripts {
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript">
+                $('document').ready(function () {
+                    Stripe.setPublishableKey('pk_test_FV6Th1IbZs5mYovNyOrxOigs');
+
+                    $('#btnCharge').on('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        Stripe.card.createToken({
+                            number: $('#txtCardNumber').val(),
+                            cvc: $('#txtCvc').val(),
+                            exp_month: $('#txtExpiryMonth').val(),
+                            exp_year: $('#txtExpiryYear').val()
+                        }, stripeResponseHandler);
+                    });
+
+                    function stripeResponseHandler(status, response) {
+                        var $form = $('#frmCharge');
+
+                        if (response.error) {
+                            // Show the errors on the form
+                            alert(response.error.message);
+                        } else {
+                            // response contains id and card, which contains additional card details
+                            var token = response.id;
+                            //alert(token);
+                            // Insert the token into the form so it gets submitted to the server
+                            $('#hdnToken').val(token);
+                            // and submit
+                            $form.get(0).submit();
+                        }
+                    }
+                });
+    </script>
+}
+
+
+
+

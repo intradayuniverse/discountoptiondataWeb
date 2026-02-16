@@ -1,0 +1,252 @@
+﻿@model DiscountOptionDataWeb.Models.OptionFile[]
+@using DiscountOptionDataWeb.Models;
+@{
+    ViewBag.Title = "Index";
+}
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>*@
+<script>
+
+    function updateMonitor(fileName, status) {
+        var shortFile = fileName.substring(0, fileName.lastIndexOf('.'));// fileName.substring(0, 7);
+        // alert(shortFile);
+
+        $("#" + shortFile).html("File [" + fileName + "]: " + "<span style='color:red;'>" + status + "</span>");
+
+    }
+
+    function GetTableCellValues()
+    {
+        var table = document.getElementById("tableFiles");
+
+        var filesArr = [];
+        
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            //iterate through rows
+            //rows would be accessed using the "row" variable assigned in the for loop
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                //iterate through columns
+                //columns would be accessed using the "col" variable assigned in the for 
+                if (j == 0 && i != 0)
+                {
+                    filesArr.push(col.innerHTML);
+                }
+                    //alert(col.innerHTML);
+            }
+        }
+
+        //for (var i = 0; i < filesArr.length; i++) {
+        //    alert(filesArr[i]);
+        //    Do something
+        //}
+    }
+
+    //not working yet, circle back later
+    $(document).ready(function () {
+        $("#btnDownloadPromise").click(function () {
+
+            //alert('hi');
+            //3: chaining
+            //var promise = $.ajax({method}"/FileDelivery/Test/1");
+            var promise = $.ajax({ url: '/FileDelivery/Test/4', type: 'POST' })
+
+            function getStuff() {
+                var promise = $.ajax({ url: '/FileDelivery/Test/5', type: 'POST' })
+            }
+
+            function myServerScript2Data()
+            {
+                var promise = $.ajax({ url: '/FileDelivery/Test/5', type: 'POST' })
+            }
+            promise.then(getStuff).done(function () { alert('done') });
+            
+        });
+    });
+
+    //not working yet, circle back later
+    $(document).ready(function () {
+        $("#btnDownloadAll").click(function (e) {
+            var table = document.getElementById("tableFiles");
+
+            var filesArr = [];
+
+            for (var i = 0, row; row = table.rows[i]; i++) {
+                //iterate through rows
+                //rows would be accessed using the "row" variable assigned in the for loop
+                for (var j = 0, col; col = row.cells[j]; j++) {
+                    //iterate through columns
+                    //columns would be accessed using the "col" variable assigned in the for 
+                    if (j == 0 && i != 0) {
+                        filesArr.push(col.innerHTML);
+                    }
+                   // alert(col.innerHTML);
+                }
+            }
+
+            for (var i = 0; i < filesArr.length; i++) {
+                // alert(filesArr[i]);
+                var file = filesArr[i];
+
+                $.post("/FileDelivery/Start", { fileName: file }, function (fileName) {
+ 
+                    updateMonitor(fileName, "Started");
+              
+                    // Periodically update monitors
+                    var intervalId = setInterval(function () {
+                        $.post("/FileDelivery/Progress", { fileName: file }, function (progress) {
+                            if (progress >= 1000000000) {
+                                updateMonitor(file, "Completed");
+
+                                clearInterval(intervalId);
+                            } else {
+                           
+                                updateMonitor(file, progress + " Kilobytes downloaded");
+                                if (progress == 100) {
+                                    updateMonitor(file, "100% downloaded");
+                                    clearInterval(intervalId);
+                               
+
+                                    // $("button[id='" + file + "']").attr('disabled', false);
+
+                                  //  $('[class*=clsLink]').attr('disabled', false);
+
+                                    // $("button").attr('disabled', false);
+                                    //  alert(shortFile);
+                                  //  window.location.href = "/FileDelivery/TransmitToClient?fileName=" + shortFile;
+                                }
+
+                            }
+                        });
+
+                    }, 100);
+
+
+                });
+           
+               
+            }
+
+        });
+    });
+
+
+    $(document).ready(function () {
+
+      
+        $(".clsLink").click(function(e){
+            //e.preventDefault();
+            var file = $(this).attr("state");
+
+            var shortFile = file.substring(0, file.lastIndexOf('.'));
+            //alert(shortFile);
+
+            window.location.href = "/FileDelivery/TransmitToClient?fileName=" + shortFile;
+           
+            //$.post("/FileDelivery/Start", { fileName: file }, function (fileName) {
+
+            //  //  $("button[id='" + file + "']").attr('disabled', true);
+
+            //  //  class*=main
+
+            //   // $('[class*=clsLink]').attr('disabled', true);
+
+            //   // $("button[id='" + file + "']").removeClass("active"); 
+
+            //   // updateMonitor(fileName, "Started");
+              
+            //    // Periodically update monitors
+            //    var intervalId = setInterval(function () {
+            //        $.post("/FileDelivery/Progress", { fileName: file }, function (progress) {
+            //            if (progress >= 1000000000) {
+            //                //updateMonitor(file, "Completed");
+
+            //                //lnh
+            //                //alert(">100 " + file);
+
+            //                clearInterval(intervalId);
+            //            } else {
+                           
+            //                //updateMonitor(file, progress + " Kilobytes downloaded");
+            //                if (progress == 100) {
+            //                   // updateMonitor(file, "100% downloaded");
+            //                    clearInterval(intervalId);
+                               
+            //                    //lnh
+            //                   // alert("=100 " + file);
+
+            //                    // $("button[id='" + file + "']").attr('disabled', false);
+
+            //                   // $('[class*=clsLink]').attr('disabled', false);
+
+            //                   // $("button").attr('disabled', false);
+            //                  //  alert(shortFile);
+            //                    window.location.href = "/FileDelivery/TransmitToClient?fileName=" + shortFile;
+            //                }
+
+            //            }
+            //        });
+
+            //    }, 100);
+
+
+            //});
+            });
+
+          
+    });
+
+</script>
+
+
+
+
+@*<button type="button" id="btnDownLoadAll"  value="Download All" />*@
+
+<br/>
+<br/>
+<br />
+<br />
+
+<div class="container">
+    @*<button type="button" id="btnDownloadAll" class="btn btn-primary active btn-block btn-lg">Download All Files</button>
+
+        <button type="button" id="btnDownloadPromise" class="btn btn-primary active btn-block btn-lg">Download Promise</button>*@
+    <h2>
+        <span style="color: #f4511e;">
+            Your ordered files to be downloaded within @System.Web.Configuration.WebConfigurationManager.AppSettings["OrderDaysNum"] days of purchase
+        </span>
+    </h2>
+            <table id="tableFiles" class="table">
+
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>File Size (MB)</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (OptionFile o in Model)
+            {
+                        <tr>
+                            <td>@o.FileName</td>
+                            <td>@o.FileSize</td>
+
+                            <td>
+
+                                <button type="button" state="@o.FileName" class="clsLink btn btn-primary active" id="@o.FileName">Download File</button>
+                                <span id="@o.ShortFileName"></span>
+                            </td>
+                        </tr>
+
+                    }
+
+                </tbody>
+            </table>
+
+            <div class="test"></div>
+
+
+</div>
+
+

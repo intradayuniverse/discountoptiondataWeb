@@ -1,0 +1,80 @@
+﻿@model DiscountOptionDataWeb.Models.OptionFile[]
+@using DiscountOptionDataWeb.Models;
+@{
+    ViewBag.Title = "Index";
+}
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<div class="container-fluid">
+    Subscription Files<br />
+
+    @ViewBag.HaveSubscription
+</div>
+
+
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>*@
+    <script>
+
+        function updateMonitor(fileName, status) {
+            var shortFile = fileName.substring(0, fileName.lastIndexOf('.'));// fileName.substring(0, 7);
+            // alert(shortFile);
+
+            $("#" + shortFile).html("File [" + fileName + "]: " + "<span style='color:red;'>" + status + "</span>");
+
+        }
+
+
+        $(document).ready(function () {
+            $(".clsLink").click(function (e) {
+                var file = $(this).attr("state");
+                var shortFile = file.substring(0, file.lastIndexOf('.'));
+                window.location.href = "/Subscription/TransmitToClient?fileName=" + shortFile;
+            });
+        });
+
+    </script>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <div class="container">
+
+        <table id="tableFiles" class="table">
+
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>File Size (KB)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (OptionFile o in Model)
+            {
+                    <tr>
+                        <td>@o.FileName</td>
+                        <td>@o.FileSize</td>
+
+                        <td>
+
+                            <button type="button" state="@o.FileName" class="clsLink btn btn-primary active" id="@o.FileName">Download File</button>
+                            <span id="@o.ShortFileName"></span>
+                        </td>
+                    </tr>
+
+                }
+
+            </tbody>
+        </table>
+
+        <div class="test"></div>
+
+
+    </div>
+
+

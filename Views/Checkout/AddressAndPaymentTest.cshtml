@@ -1,0 +1,414 @@
+﻿@model DiscountOptionDataWeb.Models.CustomerOrder
+@{
+    ViewBag.Title = "AddressAndPayment";
+}
+
+<style>
+    input[type=checkbox] {
+        zoom: 1.5;
+    }
+</style>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"
+        type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"
+        type="text/javascript"></script>
+
+
+<br />
+<br />
+@*https://dcrazed.com/jquery-css3-progress-bars/*@
+<div class="checkout-wrap">
+    <ul class="checkout-bar">
+        <li class="previous visited">Login</li>
+
+        <li class="previous visited">Checkout</li>
+
+        <li class="active">Delivery Options/Payment</li>
+
+        <li class="next">Complete</li>
+
+    </ul>
+</div>
+
+<!--Step 1: choose delivery methods-->
+
+@using (Html.BeginForm("AddressAndPayment", "Checkout", new { ReturnUrl = ViewBag.ReturnUrl },
+                            FormMethod.Post, new { @class = "form-horizontal require-validation", role = "form", id = "frmCharge" }))
+{
+
+    <br />
+    <br />
+    <div class="container-fluid">
+
+        <h2>SELECT YOUR DELIVERY METHODS AND MAKE PAYMENT</h2>
+        <div class="panel-group">
+            <div class="panel panel-success">
+                <div class="panel-heading">Direct download from DiscountOptionData.com</div>
+                <div class="panel-body"><p>Upon completion of purchase, we will provide you a link to download your files.</div>
+            </div>
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">Delivery to your Google Drive</div>
+                <div class="panel-body">
+                    <p>
+                        The easiest way to get your files is to have them shared with your Google Drive if you you have a Google Account.
+                        If you don't have a Google Account already, you can quickly <a href="https://accounts.google.com/SignUp" target="_blank">sign up here</a>
+                        <br />
+                        Please provide us your Google Email address to have your files shared automatically
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.GmailAddress, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-10">
+                                @if (User.Identity.Name.Contains("gmail"))
+                                {
+                                    @Html.TextBoxFor(m => m.GmailAddress, new { id = "txtGmailAddress", @Value = User.Identity.Name, @class = "form-control", @placeholder = "abc@gmail.com" })
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(m => m.GmailAddress, new { id = "txtGmailAddress", @Value = "", @class = "form-control", @placeholder = "example: abc@gmail.com" })
+                                }
+                            </div>
+                        </div>
+                        @*<div class="input-group">
+                                @Html.LabelFor(m => m.GmailAddress, new { @class = "control-label" })
+                                @Html.TextBoxFor(model => model.GmailAddress, new { id = "txtGmailAddress", @Value = "luanhuynh73@gmail.com", @class = "form-control", @placeholder = "abc@gmail.com" })
+                            </div>*@
+
+                </div>
+            </div>
+
+            <div class="panel panel-info">
+                <div class="panel-heading">Physcial Delivery</div>
+                <div class="panel-body">
+                    <p>The old fashion way! We'll send you a flash drive with data to your home address</p>
+                    <p>
+                        Please check this box if you want this option:
+                        @Html.CheckBoxFor(model => model.ShipToHome, new { id = "chkShipToHome", @onchange = "ShipToHomeChange()" })
+                    </p>
+                    <p>Please note that we'll need to charge you a flat shipping and handling fee of $20</p>
+
+                    <div class="panel panel-info" id="divShippingAddress">
+
+                        <div class="panel-body">
+
+
+                            <div class="form-group">
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>First Name:</strong>
+                                    @*<input type="text" name="first_name" class="form-control" value="" />*@
+                                    @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", id = "txtFirstName" })
+                                    <span style="color:red">*Required</span>
+                                </div>
+                                <div class="span1"></div>
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Last Name:</strong>
+                                    @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", id = "txtLastName" })
+                                    <span style="color:red">*Required</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+
+                                <div class="col-md-12 col-xs-12">
+                                    <strong>Address:</strong>
+                                    @Html.TextBoxFor(model => model.Address, new { @class = "form-control", id = "txtAddress", @Value = "" })
+                                    <span style="color:red">*Required</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-4 col-xs-12">
+                                    <strong>City:</strong>
+                                    @Html.TextBoxFor(model => model.City, new { @class = "form-control", id = "txtCity", @Value = "" })
+                                    <span style="color:red">*Required</span>
+                                </div>
+                                <div class="col-md-4 col-xs-12">
+                                    <strong>State:</strong>
+                                    @Html.TextBoxFor(model => model.State, new { @class = "form-control", id = "txtState", @Value = "" })
+                                    <span style="color:red">*Required</span>
+                                </div>
+                                <div class="col-md-4 col-xs-12">
+                                    <strong>Zip / Postal Code:</strong>
+                                    @Html.TextBoxFor(model => model.PostalCode, new { @class = "form-control", id = "txtPostalCode", @Value = "" })
+                                    <span style="color:red">*Required</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="color:red;text-align:center;">
+
+        <h2>@ViewBag.PaymentIssue</h2>
+
+    </div>
+
+    <!--Step 2: Enter your credit card-->
+    <div class="container">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Payment Information</div>
+
+
+
+            <div class="panel-body">
+                <div class="panel-heading display-table">
+                    <div class="row display-tr">
+
+                        <div class="display-td">
+                            <img class="img-responsive pull-left" src="http://i76.imgup.net/accepted_c22e0.png">
+                        </div>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-md-4'></div>
+                    <div class='col-md-4'>
+                        <script src='https://js.stripe.com/v2/' type='text/javascript'></script>
+
+                        <div class='form-row'>
+                            <div class='col-xs-12 form-group required'>
+                                <label class='control-label'>Name on Card</label>
+                                <input class='form-control' size='4' type='text' value="Luan Huynh">
+                            </div>
+                        </div>
+                        <div class='form-row'>
+                            <div class='col-xs-12 form-group card required'>
+                                <label class='control-label'>Card Number</label>
+                                <input autocomplete='off' id="txtCardNumber" value="4242424242424242" class='form-control card-number' size='20' type='text'>
+                            </div>
+                        </div>
+                        <div class='form-row'>
+                            <div class='col-xs-4 form-group cvc required'>
+                                <label class='control-label'>CVC</label>
+                                <input autocomplete='off' id="txtCvc" class='form-control card-cvc' value="123" placeholder='ex. 311' size='4' type='text'>
+                            </div>
+                            <div class='col-xs-4 form-group expiration required'>
+                                <label class='control-label'>Expiration</label>
+                                @*<input class='form-control card-expiry-month' id="txtExpiryMonth" value="11" placeholder='MM' size='2' type='text'>*@
+                                <select name="txtExpiryMonth" id="txtExpiryMonth" class='form-control card-expiry-month'>
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">00</option>
+                                    <option value="10">11</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div class='col-xs-4 form-group expiration required'>
+                                <label class='control-label'>&nbsp;</label>
+                                @*<input class='form-control card-expiry-year' id="txtExpiryYear" value="2019" placeholder='YYYY' size='4' type='text'>*@
+                                <select name="txtExpiryYear" id="txtExpiryYear" class='form-control card-expiry-year'>
+                                    <option value="2018">2018</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class='form-row'>
+                            <div class='col-md-12 error form-group hide'>
+                                <div class='alert-danger alert'>
+                                    Please correct the errors and try again.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-md-4'></div>
+            </div>
+        </div>
+    </div>
+
+    <p>
+        @Html.HiddenFor(model => model.Token, new { id = "hdnToken" })
+        <button type="button" id="btnCharge" class="btn btn-primary center-block btn-lg">PLACE YOUR ORDER </button>
+    </p>
+
+}
+
+
+@section Scripts {
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+    <script type="text/javascript">
+        function ShipToHomeChange()
+        {
+            //have it here too, toggle on/off the Shipping Address
+            var chkShipToHome = document.getElementById('chkShipToHome').checked;
+            var divShowHide = document.getElementById('divShippingAddress');
+            //alert(chkShipToHome);
+            if (chkShipToHome == false) {
+                //alert('false');
+                divShowHide.style.display = 'none';
+            } else {
+                //alert('true');
+                divShowHide.style.display = 'block';
+            }
+        }
+
+    </script>
+
+    <script type="text/javascript">
+
+
+        //error handling
+        $(function () {
+            $('#btnCharge').on('click', function (e) {
+
+
+
+                var $form = $(e.target).closest('form'),
+                    inputSelector = ['input[type=email]', 'input[type=password]',
+                                     'input[type=text]', 'input[type=file]',
+                                     'textarea'].join(', '),
+                    $inputs = $form.find('.required').find(inputSelector),
+                    $errorMessage = $form.find('div.error'),
+                    valid = true;
+
+                $errorMessage.addClass('hide');
+                $('.has-error').removeClass('has-error');
+                $inputs.each(function (i, el) {
+                    var $input = $(el);
+                    if ($input.val() === '') {
+                        $input.parent().addClass('has-error');
+                        $errorMessage.removeClass('hide');
+                        e.preventDefault(); // cancel on first error
+                    }
+                });
+            });
+        });
+
+        $('document').ready(function () {
+
+            //have it here too, toggle on/off the Shipping Address
+            var chkShipToHome = document.getElementById('chkShipToHome').checked;
+            var divShowHide = document.getElementById('divShippingAddress');
+            //alert(chkShipToHome);
+            if (chkShipToHome == false) {
+               // alert('false');
+                divShowHide.style.display = 'none';
+            } else {
+               // alert('true');
+                divShowHide.style.display = 'block';
+            }
+
+
+                    Stripe.setPublishableKey('pk_test_FV6Th1IbZs5mYovNyOrxOigs');
+
+                    $('#btnCharge').on('click', function (e) {
+
+                        //validate addresses of checkbox is checked
+                        var chkShipToHome = document.getElementById('chkShipToHome').checked;
+                        var divShowHide = document.getElementById('divShippingAddress');
+                        //alert(chkShipToHome);
+                        if (chkShipToHome == true) {
+                            var firstName = $('#txtFirstName').val();
+                            var lastName = document.getElementById('txtLastName').value;
+                            var address = document.getElementById('txtAddress').value;
+                            var city = document.getElementById('txtCity').value;
+                            var state = document.getElementById('txtState').value;
+                            var zip = document.getElementById('txtPostalCode').value;
+
+                            var IsValid = true
+
+                            if (firstName == '') {
+                                $('#txtFirstName').css('border-color', 'red');
+                                IsValid = false;
+                            }
+                            else
+                            {
+                                $('#txtFirstName').css('border-color', '');
+                            }
+                            if (lastName == '') {
+                                $('#txtLastName').css('border-color', 'red');
+                                IsValid = false;
+                            }
+                            else
+                            {
+                                $('#txtLastName').css('border-color', '');
+                            }
+                            if (address == '') {
+                                $('#txtAddress').css('border-color', 'red');
+                                IsValid = false;
+                            }
+                            else {
+                                $('#txtAddress').css('border-color', '');
+                            }
+
+                            if (city == '') {
+                                $('#txtCity').css('border-color', 'red');
+                                IsValid = false;
+                            }
+                            else
+                            {
+                                $('#txtCity').css('border-color', '');
+                            }
+                            if (state == '') {
+                                $('#txtState').css('border-color', 'red');
+                                IsValid = false;
+                            }
+                            else
+                            {
+                                $('#txtState').css('border-color', '');
+                            }
+                            if (zip == '') {
+                                $('#txtPostalCode').css('border-color', 'red');
+                                IsValid = false;
+                            }
+                            else
+                            {
+                                $('#txtPostalCode').css('border-color', '');
+                            }
+                        }
+
+                        if (IsValid == false)
+                        {
+                            return 0;
+                        }
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        Stripe.card.createToken({
+                            number: $('#txtCardNumber').val(),
+                            cvc: $('#txtCvc').val(),
+                            exp_month: $('#txtExpiryMonth').val(),
+                            exp_year: $('#txtExpiryYear').val()
+                        }, stripeResponseHandler);
+                    });
+
+                    function stripeResponseHandler(status, response) {
+                        var $form = $('#frmCharge');
+
+                        if (response.error) {
+                            // Show the errors on the form
+                            alert(response.error.message);
+                        } else {
+                            // response contains id and card, which contains additional card details
+                            var token = response.id;
+
+                            // Insert the token into the form so it gets submitted to the server
+                            $('#hdnToken').val(token);
+                            //alert($('#hdnToken').val());
+                            // and submit
+                            $form.get(0).submit();
+                        }
+                    }
+                });
+    </script>
+}

@@ -1,0 +1,133 @@
+﻿@model DiscountOptionDataWeb.Models.CustomerOrder
+@using System.Configuration
+@{
+    ViewBag.Title = "Complete";
+    
+}
+<br/>
+<br/>
+<div class="checkout-wrap">
+    <ul class="checkout-bar">
+        <li class="previous visited">Login</li>
+
+        <li class="previous visited">Checkout</li>
+
+        <li class="previous visited">Delivery Options/Payment</li>
+
+        <li class="active">Complete</li>
+
+    </ul>
+</div>
+<br/>
+<br/>
+<div class="container">
+
+    @{
+        //orderID magnifier
+        var orderIDInit = Int32.Parse(System.Configuration.ConfigurationManager.AppSettings["OrderIDInit"].ToString());
+        var orderIDDisplay = Model.Id + orderIDInit;
+    }
+    <br/>
+    <br/>
+    <h2>Thank you for your order! Your order id is: @orderIDDisplay.ToString()</h2>
+
+    <div class="container">
+        <h2>Your Order Summary</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <tr class="info">
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                       Total Order Amount<br/>
+                     
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DateCreated)
+                    </th>
+                 
+                    <th>
+                        @Html.DisplayNameFor(model => model.Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.City)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.State)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PostalCode)
+                    </th>
+                  
+                </tr>
+
+              
+                    <tr class="success">
+                        <td>
+                         
+                            <table class="table table-striped">
+                                @foreach (var o in Model.OrderProducts)
+                                {
+                                    <tr>
+                                        <td>Product Id: @o.ProductId </td>
+                                        <td>Product Name: @o.Product.Name </td>
+                                        <td>Price: @o.Product.Price.ToString("C") </td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+
+                        <td>
+                            $@Html.DisplayFor(modelItem => Model.Amount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.DateCreated)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.City)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.State)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.PostalCode)
+                        </td>
+                       
+
+                    </tr>
+        <!--order detail: ordered products for each orderId-->
+
+              
+            </table>
+       
+            @{
+                if (Model.ShipToHome == true)
+                {
+                    <h4>Shipping Fee: $@ConfigurationManager.AppSettings["ShippingCost"].ToString()</h4>
+                }
+            }
+    </div>
+
+
+    @{
+        if (Model.ShipToHome == true)
+        {
+            <h3>You have opted to have your files shipped to your address at:</h3>
+          
+            Html.RenderAction("CustomerAddress", "Checkout");
+        }
+    }
+
+    @{
+        if (Model.GmailAddress != null && Model.GmailAddress.Contains("gmail"))
+        {
+           <h3>Your files will be delivered within 24 hours to your Google Drive account <a href="https://drive.google.com/drive/shared-with-me" target="_blank">https://drive.google.com/drive/shared-with-me</a> via @Model.GmailAddress  </h3>  
+        }
+    }
+
+    </div>

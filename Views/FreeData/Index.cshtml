@@ -1,0 +1,159 @@
+﻿
+   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  
+
+<br/>
+<br/>
+<br/>
+<br/>
+    <div class="container-fluid">
+    <div class="jumbotron">
+        <h1>Free Historical Option Data Chain</h1>
+        <p>Free historical option data chain for some of the most heavily traded stocks and indexes for the past 6 months</p>
+    </div>
+    <div>
+        <p>
+            <strong>Step 1</strong>:
+            Select symbol:
+            @Html.DropDownList("symbol", (IEnumerable<SelectListItem>)ViewBag.Symbols, new { @class = "form-horizontal" })
+        </p>
+        <p><strong>Step 2</strong>: Select Data Date: <input type="text" id="dataDate"></p>
+        <p><strong>Step 3</strong>: Select Expiration Date: <select id="expirationDate" class="form-horizontal"></select></p>
+        <button class="btn btn-success" onclick="DisplayOptionData()">Get OptionData</button>
+    </div>
+    <br />
+    <div id="loading" class="load" style="display:none">
+        <p style="color:red;">Loading Data...</p>
+    </div>
+    <div id="divResult"></div>
+</div>
+
+@section Scripts {
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+      $("#dataDate").datepicker({
+          dateFormat: 'yy-mm-dd',
+          showOn: "button",
+          buttonImage: "../content/images/calendar.gif",
+          buttonImageOnly: true,
+          buttonText: "Select date"
+      });
+
+      $("#dataDate").change(function () {
+
+          DisplayExpirationDates();
+
+      });
+
+      $("#symbol").change(function () {
+       
+          DisplayExpirationDates();
+
+      });
+
+        function DisplayExpirationDates()
+      {
+            var vDate = $("#dataDate").val();
+            var vSymbol = $('#symbol').val();
+
+
+         //  alert('symbol: ' + vSymbol);
+            $('#expirationDate').empty();
+          $.ajax({
+                url: "/freedata/getexpirationdates?symbol=" + vSymbol + "&datadate=" + vDate,
+              //data: [myVar = {id: 4, email: 'emailaddress', myArray: [1, 2, 3]}];
+              success: function (response) {
+                    //Do Something
+                    //alert(response);
+
+                    // Add the list of expiration dates to the drop down here
+                    var expDates = response;// [1, 2, 3, 4, 5];
+                    var option = '';
+                    for (var i = 0; i < expDates.length; i++) {
+                        option += '<option value="' + expDates[i] + '">' + expDates[i] + '</option>';
+                    }
+                  $('#expirationDate').append(option);
+                },
+              error: function (xhr) {
+                    //Do Something to handle error
+                }
+            });
+        }
+
+  } );
+
+        function DisplayOptionData()
+  {
+            var vDate = $("#dataDate").val();
+            var vSymbol = $('#symbol').val();
+            var vExpirationDate = $("#expirationDate").val();
+
+
+            jQuery.support.cors = true;
+            $.ajax({
+                url: "/freedata/getoptiondatajson?symbol=" + vSymbol + "&datadate=" + vDate + "&expirationDate=" + vExpirationDate,
+               // url: "/OptionData/getoptiondatajson?symbol=spx&datadate=2017-10-10&expirationdate=2019-06-21",
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+
+                    WriteReponse(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        }
+
+        function WriteReponse(data) {
+            var strResult = "<div class='container-fluid'><div><table class='table table-hover'><tr><th>Expiration Date</th>"
+                + "<th>Ask Price</th><th>Bid Price</th><th>Last Price</th>"
+                + "<th>Put Call</th><th>Strike Price</th><th>Volume</th><th>Implied Volatility</th><th>Delta</th><th>Gamma</th><th>Vega</th>"
+            + "<th>Open Interest</th><th>Underlying Price</th></tr>";
+            $.each(data, function (index, data) {
+                if (data.PutCall == "call") {
+                    strResult += "<tr class='success'><td>" + data.ExpirationDate + "</td><td> " + data.AskPrice + "</td><td>" + data.BidPrice + "</td><td>"
+
+                          + data.LastPrice + "</td><td>"
+                         + data.PutCall + "</td><td>"
+                          + data.StrikePrice + "</td><td>"
+                          + data.Volume + "</td><td>"
+                          + data.ImpliedVolatility + "</td><td>"
+                         + data.Delta + "</td><td>"
+                          + data.Gamma + "</td><td>"
+                          + data.Vega + "</td><td>"
+
+                          + data.OpenInterest + "</td><td>"
+                          + data.UnderlyingPrice
+                        + "</td></tr>";
+                }
+                else {
+                    strResult += "<tr class='danger'><td>" + data.ExpirationDate + "</td><td> " + data.AskPrice + "</td><td>" + data.BidPrice + "</td><td>"
+
+                         + data.LastPrice + "</td><td>"
+                        + data.PutCall + "</td><td>"
+                         + data.StrikePrice + "</td><td>"
+                         + data.Volume + "</td><td>"
+                         + data.ImpliedVolatility + "</td><td>"
+                        + data.Delta + "</td><td>"
+                         + data.Gamma + "</td><td>"
+                         + data.Vega + "</td><td>"
+
+                         + data.OpenInterest + "</td><td>"
+                         + data.UnderlyingPrice
+                       + "</td></tr>";
+                }
+            });
+            strResult += "</table></div></div>";
+            $("#divResult").html(strResult);
+
+
+        }
+</script>
+
+}
+

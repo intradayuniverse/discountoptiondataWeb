@@ -1,0 +1,90 @@
+﻿@model IEnumerable<DiscountOptionDataWeb.Models.CustomerOrder>
+@{
+    ViewBag.Title = "Customer Orders History";
+
+}
+
+<br /><br/><br/>
+<div class="container">
+    <div class="jumbotron text-center">
+        <h1><span style="color: #f4511e;">Your Order History</span></h1>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <tr class="info">
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        Total Order Amount
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DateCreated)
+                    </th>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.City)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.State)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PostalCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Country)
+                    </th>
+
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr class="success">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                            <table class="table table-striped">
+                                @foreach (var o in item.OrderProducts)
+                                {
+                                    <tr>
+                                        <td>Product Id: @o.ProductId </td>
+                                        <td>Product Name: @o.Product.Name </td>
+                                        <td>Price: @o.Product.Price.ToString("C") </td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                        <td>
+                            $@Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DateCreated)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.City)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.State)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PostalCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Country)
+                        </td>
+
+                    </tr>
+        <!--order detail: ordered products for each orderId-->
+
+                }
+
+            </table>
+        </div>
+    </div>
+</div>

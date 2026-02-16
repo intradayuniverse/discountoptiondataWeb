@@ -1,0 +1,115 @@
+﻿@using System.Diagnostics.Eventing.Reader
+@using System.Globalization
+@model DiscountOptionDataWeb.ViewModels.ShoppingCartViewModel
+@{
+    ViewBag.Title = "Store Checkout";
+    CultureInfo us = new CultureInfo("en-US");
+
+
+}
+
+
+
+<br/>
+<br/>
+
+    <div class="checkout-wrap">
+        <ul class="checkout-bar">
+            <li class="previous visited">Login</li>
+
+            <li class="active">Checkout</li>
+
+            <li class="next">Delivery Options/Payment</li>
+
+            <li class="next">Complete</li>
+
+        </ul>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    @if (Model.CartItems.Count == 0)
+    {
+        <p>
+
+            <div class="container">
+                <h3>Shopping Cart</h3><hr>
+                @Html.ActionLink("Your shopping cart is empty, continue shopping-->", "Index", "Home", null, new { @class = "glyphicon glyphicon-shopping-cart btn btn-primary active" })
+            </div>
+        </p>
+    }
+    else
+    {
+        <br />
+        <div class="container">
+            <h2>Shopping Cart</h2><hr>
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th class="text-center">Price</th>
+                                <th class="text-center">Total</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.CartItems)
+                            {
+                                <tr id="row-@item.ProductId">
+                                    <td class="col-sm-8 col-md-6">
+                                        <h4 class="media-heading">@item.Product.Name</h4>
+                                    </td>
+
+                                    <td id="item-count-@item.ProductId" class="col-sm-1 col-md-1 text-center">
+                                        @item.Count
+                                    </td>
+                                    <td>
+                                        @item.Product.Price.ToString("c", us)
+                                    </td>
+                                    <td class="col-sm-1 col-md-1 text-center">
+                                        @((item.Product.Price * item.Count).ToString("c", us))
+                                    </td>
+                                    <td class="col-sm-1 col-md-1">
+
+                                        @Html.ActionLink("  Remove", "RemoveFromCart", "ShoppingCart", new { id = @item.ProductId }, new { @class = "btn btn-danger glyphicon glyphicon-remove" })
+                                    </td>
+                                </tr>
+                            }
+                            <tr>
+                                <td>   </td>
+                                <td>   </td>
+                                <td>   </td>
+                                <td><h3>Total</h3></td>
+                                <td class="text-right"><h3><strong>@Model.CartTotal.ToString("C", us)</strong></h3></td>
+                            </tr>
+                            <tr>
+                                <td>   </td>
+                                <td>   </td>
+                                <td>   </td>
+                                <td>
+                                    <p class="button">
+                                        @Html.ActionLink("Continue Shopping", "Index", "Home", null, new { @class = "glyphicon glyphicon-shopping-cart btn btn-primary active" })
+                                    </p>
+
+                                    @*What's going on @ViewBag.ProductID*@
+                                </td>
+                                <td>
+                                    <p class="button">
+                                        @Html.ActionLink("Checkout", "AddressAndPayment", "Checkout", null, new { @class = "glyphicon glyphicon-play btn btn-success" })
+                                    </p>
+                                </td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    }

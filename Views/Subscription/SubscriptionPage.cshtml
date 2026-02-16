@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="container-fluid">
+    Your daily data subscription<br />
+
+    
+        @if (ViewBag.HaveSubscription == "havesubscription")
+        {
+           @Html.Raw("Your data is here &nbsp; <a href = 'https://www.google.com/drive/' target = '_blank'>https://www.google.com/drive/</a>");
+        }
+        else
+        {
+          @Html.Raw("You have no suscription");
+        }
+
+    
+</div>
+
+
+
+
